@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    canvas {
+      display: block;
+      margin: 20px auto;
+      background-color: #f0f0f0;
+      border: 2px solid #333;
+      border-radius: 10px;
+    }
+  </style>
+  <title>Электронные Часы</title>
+</head>
+<body>
+  <canvas id="clockCanvas" width="400" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('clockCanvas');
+    const ctx = canvas.getContext('2d');
+    const radius = canvas.width / 2;
+
+    function drawClock() {
+      // Очистить холст
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Нарисовать циферблат
+      ctx.beginPath();
+      ctx.arc(radius, radius, radius - 10, 0, 2 * Math.PI);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#333';
+      ctx.stroke();
+
+      // Нарисовать каждый часовой маркер
+      for (let i = 1; i <= 12; i++) {
+        const angle = (i * Math.PI) / 6;
+        const x = radius + (radius - 30) * Math.cos(angle);
+        const y = radius + (radius - 30) * Math.sin(angle);
+
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#333';
+        ctx.fill();
+      }
+
+      // Получить текущее время
+      const now = new Date();
+      const hours = now.getHours() % 12;
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      // Нарисовать часовую стрелку
+      drawHand(hours * 30 + (minutes / 60) * 30, radius - 50, 8, '#333');
+
+      // Нарисовать минутную стрелку
+      drawHand(minutes * 6 + (seconds / 60) * 6, radius - 20, 4, '#555');
+
+      // Нарисовать секундную стрелку
+      drawHand(seconds * 6, radius - 10, 2, '#f00');
+
+      // Вызвать функцию анимации через requestAnimationFrame
+      requestAnimationFrame(drawClock);
+    }
+
+    function drawHand(angle, length, width, color) {
+      ctx.beginPath();
+      ctx.lineWidth = width;
+      ctx.strokeStyle = color;
+      ctx.moveTo(radius, radius);
+      const x = radius + length * Math.cos((angle * Math.PI) / 180);
+      const y = radius + length * Math.sin((angle * Math.PI) / 180);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    // Начать анимацию
+    drawClock();
+  </script>
+</body>
+</html>
